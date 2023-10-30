@@ -1,8 +1,9 @@
 import PropTypes from "prop-types";
 import { BiRightArrowAlt } from "react-icons/bi";
+import { Link } from "react-router-dom";
 
 const ServiceCard = ({ service }) => {
-  const { title, img, price } = service;
+  const { _id, title, img, price } = service;
   return (
     <div className="card shadow-2xl h-96 rounded-lg">
       <figure className="p-5">
@@ -13,9 +14,9 @@ const ServiceCard = ({ service }) => {
 
         <div className="card-actions items-center justify-between text-[#ff3811]">
           <p className="">Price: ${price}</p>
-          <p className=" text-xl">
+          <Link to={`/checkout/${_id}`} className=" text-xl">
             <BiRightArrowAlt />
-          </p>
+          </Link>
         </div>
       </div>
     </div>

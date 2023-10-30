@@ -7,18 +7,25 @@ import { useContext } from "react";
 import { AuthContext } from "../../Provider/AuthProvider";
 
 const Register = () => {
-  const { createUser } = useContext(AuthContext);
+  const { createUser, profileUpdate } = useContext(AuthContext);
 
   const handleRegister = (event) => {
     event.preventDefault();
     const form = event.target;
     const name = form.name.value;
+    const phone = form.phone.value;
     const photo = form.photo.value;
     const email = form.email.value;
     const password = form.password.value;
-    console.log(name, photo, email, password);
+    console.log(name, photo, phone, email, password);
     createUser(email, password)
-      .then((result) => console.log(result))
+      .then((result) => {
+        console.log(result);
+		
+        profileUpdate(name, phone).then((result) =>
+          console.log("profile updated", result)
+        );
+      })
       .catch((err) => console.log(err.message));
     form.reset();
   };
@@ -44,6 +51,20 @@ const Register = () => {
                 name="name"
                 type="name"
                 placeholder="Your name"
+                className="input bg-white text-black border-[#ff3811] input-bordered"
+                required
+              />
+            </div>
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text font-semibold text-black">
+                  Phone Number
+                </span>
+              </label>
+              <input
+                name="phone"
+                type="phone"
+                placeholder="Your number"
                 className="input bg-white text-black border-[#ff3811] input-bordered"
                 required
               />

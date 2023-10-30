@@ -2,12 +2,16 @@ import img from "../../../assets/images/login/login.svg";
 import { BiLogoFacebook } from "react-icons/bi";
 import { FcGoogle } from "react-icons/fc";
 import { BiLogoLinkedin } from "react-icons/bi";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../../Provider/AuthProvider";
+import axios from "axios";
 
 const Login = () => {
-  const { Login } = useContext(AuthContext);
+  const { Login, googleSignIn } = useContext(AuthContext);
+  const location = useLocation();
+
+  const navigate = useNavigate();
 
   const handleLogin = (event) => {
     event.preventDefault();
@@ -16,9 +20,31 @@ const Login = () => {
     const password = form.password.value;
     console.log(email, password);
     Login(email, password)
-      .then((result) => console.log(result))
+      .then((result) => {
+        console.log(result);
+        const user = { email };
+
+        axios
+          .post("http://localhost:7000/jwt", user, { withCredentials: true })
+          .then((res) => {
+            console.log(res.data);
+            if (res?.data?.success) {
+              navigate(location?.state ? location.state : "/");
+            }
+          });
+      })
+
       .catch((err) => console.log(err.message));
     form.reset();
+  };
+  const handleGoogleLogin = () => {
+    googleSignIn()
+      .then((result) => {
+        console.log(result.user);
+
+        navigate(location?.state ? location.state : "/");
+      })
+      .catch((err) => console.error(err.message));
   };
 
   return (
@@ -79,7 +105,10 @@ const Login = () => {
                 <span className="text-blue-700 rounded-full p-2 bg-[#f5f5f8]">
                   <BiLogoLinkedin />
                 </span>
-                <span className=" rounded-full p-2 bg-[#f5f5f8]">
+                <span
+                  onClick={handleGoogleLogin}
+                  className=" rounded-full p-2 bg-[#f5f5f8]"
+                >
                   <FcGoogle />
                 </span>
               </div>
