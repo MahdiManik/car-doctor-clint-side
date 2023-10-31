@@ -49,11 +49,12 @@ const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      const userEmail = currentUser?.email || user?.email;
+      const loggedUser = { email: userEmail };
       setUser(currentUser);
       console.log("current User", currentUser);
       setLoading(false);
       if (currentUser) {
-        const loggedUser = { email: currentUser.email };
         axios
           .post("http://localhost:7000/jwt", loggedUser, {
             withCredentials: true,
@@ -61,12 +62,20 @@ const AuthProvider = ({ children }) => {
           .then((res) => {
             console.log("token response in auth provider", res.data);
           });
+      } else {
+        axios
+          .post("http://localhost:7000/logout", loggedUser, {
+            withCredentials: true,
+          })
+          .then((res) => {
+            console.log("logout api", res.data);
+          });
       }
     });
     return () => {
       return unsubscribe();
     };
-  }, []);
+  }, [user?.email]);
 
   const authInfo = {
     user,
